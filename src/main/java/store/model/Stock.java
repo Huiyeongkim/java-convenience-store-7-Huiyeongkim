@@ -8,11 +8,20 @@ import java.util.List;
 
 public class Stock {
     private static final String file = "src/main/resources/products.md";
-    private final List<Product> products;
+    private static List<Product> products;
 
     public Stock() throws IOException {
         products = new ArrayList<>();
         readProductsFile(products);
+    }
+
+    public static Product findProductByName(String orderedProductName) {
+        for (Product product : products) {
+            if (product.getProductName().equals(orderedProductName)) {
+                return product;
+            }
+        }
+        return null;
     }
 
     private void readProductsFile(List<Product> products) throws IOException {
@@ -42,4 +51,6 @@ public class Stock {
     public List<Product> getProducts() {
         return products;
     }
+
+
 }

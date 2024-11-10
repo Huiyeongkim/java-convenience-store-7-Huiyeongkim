@@ -18,11 +18,13 @@ public class InputView {
     }
 
     public static String readMembership(){
+        System.out.println();
         System.out.println(enterMembership);
         return Console.readLine();
     }
 
     public static String readOtherProduct(){
+        System.out.println();
         System.out.println(enterOtherProducts);
         return Console.readLine();
     }
