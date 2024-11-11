@@ -12,6 +12,7 @@ public class Stock {
 
     public Stock() throws IOException {
         products = new ArrayList<>();
+        Promotion.readPromotionsFile();
         readProductsFile(products);
     }
 
@@ -35,7 +36,7 @@ public class Stock {
                 bufferedReader.close();
                 break;
             }
-            this.products.add(splitLine(line));
+            products.add(splitLine(line));
         }
     }
     private Product splitLine(String line) {
