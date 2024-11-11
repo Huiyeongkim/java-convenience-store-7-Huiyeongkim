@@ -1,20 +1,24 @@
 package store.controller;
 
 import store.model.Product;
-import store.model.Stock;
+import store.model.ProductManager;
 import store.model.Order;
+import store.model.PromotionManager;
 import store.view.InputView;
 import store.view.OutputView;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StoreController {
     public void start() throws IOException {
         InputView.displayWelcomeMessage();
-        Stock stock = new Stock();
-        List<Product> products = stock.getProducts();
+        ProductManager productManager = new ProductManager();
+        PromotionManager promotionManager = new PromotionManager();
+
+        List<Product> products = productManager.getProducts();
         for (Product product : products) {
             String productName = product.getProductName();
             int price = product.getPrice();
@@ -23,12 +27,12 @@ public class StoreController {
             OutputView.displayStock(productName, price, quantity, promotion);
         }
 
-        getProducts();
+        getProducts(promotionManager);
     }
 
-    private void getProducts() {
+    private void getProducts(PromotionManager promotionManager) {
         String inputProduct = InputView.readProduct();
-        List<Order> orders = handleOrder(inputProduct);
+        List<Order> orders = handleOrder(inputProduct, promotionManager);
         InputView.readMembership();
         OutputView.displayReceiptStart();
 
@@ -40,9 +44,11 @@ public class StoreController {
             int orderedPrice = orderedProductPrice * orderedProductQuantity;
             OutputView.displayReceipt(orderedProductName, orderedProductQuantity, orderedPrice);
         }
+
+        getPromotions(orders);
     }
 
-    private List<Order> handleOrder(String inputProduct) {
+    private List<Order> handleOrder(String inputProduct, PromotionManager promotionManager) {
         String[] tokens = inputProduct.split(",");
         List<Order> orders = new ArrayList<>();
         for (String token : tokens) {
@@ -51,11 +57,16 @@ public class StoreController {
             String[] split = s.split("-");
             String orderedProductName = split[0].trim();
             int orderedProductQuantity = Integer.parseInt(split[1].trim());
+            LocalDate currentDate = LocalDate.now();
 
-            orders.add(new Order(orderedProductName, orderedProductQuantity));
+            orders.add(new Order(orderedProductName, orderedProductQuantity, currentDate));
         }
         return orders;
 
     }
 
+    private void getPromotions(List<Order> orders) {
+        OutputView.displayGiveawayStart();
+
+    }
 }
