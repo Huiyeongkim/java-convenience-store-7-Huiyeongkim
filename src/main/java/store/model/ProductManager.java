@@ -28,6 +28,15 @@ public class ProductManager {
         return null;
     }
 
+    public static Product findPromotionProductByName(String orderedProductName) {
+        for (Product product : productsWithPromotion) {
+            if (product.getProductName().equals(orderedProductName)) {
+                return product;
+            }
+        }
+        return null;
+    }
+
     private void readProductsFile() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         bufferedReader.readLine();

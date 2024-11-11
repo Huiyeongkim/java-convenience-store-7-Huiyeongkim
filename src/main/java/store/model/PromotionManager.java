@@ -16,6 +16,15 @@ public class PromotionManager {
         readPromotionsFile();
     }
 
+    public static Promotion findPromotionByPromotionName(String promotionName) {
+       for (Promotion promotion : promotions) {
+            if (promotion.getPromotionName().equals(promotionName)) {
+                return promotion;
+            }
+        }
+        return null;
+    }
+
     public static void readPromotionsFile() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(promotionsFile));
         bufferedReader.readLine();

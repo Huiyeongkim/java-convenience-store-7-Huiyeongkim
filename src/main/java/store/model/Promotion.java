@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 public class Promotion {
-    private static String promotionName;
-    private static int buyQuantity;
-    private static int freeQuantity;
-    private static LocalDate startDate;
-    private static LocalDate endDate;
+    private String promotionName;
+    private int buyQuantity;
+    private int freeQuantity;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     public Promotion(String promotionName, int buyQuantity, int freeQuantity, String startDate, String endDate) throws IOException {
         this.promotionName = promotionName;

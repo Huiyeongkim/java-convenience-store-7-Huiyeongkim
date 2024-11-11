@@ -1,9 +1,6 @@
 package store.controller;
 
-import store.model.Product;
-import store.model.ProductManager;
-import store.model.Order;
-import store.model.PromotionManager;
+import store.model.*;
 import store.view.InputView;
 import store.view.OutputView;
 
@@ -57,9 +54,8 @@ public class StoreController {
             String[] split = s.split("-");
             String orderedProductName = split[0].trim();
             int orderedProductQuantity = Integer.parseInt(split[1].trim());
-            LocalDate currentDate = LocalDate.now();
 
-            orders.add(new Order(orderedProductName, orderedProductQuantity, currentDate));
+            orders.add(new Order(orderedProductName, orderedProductQuantity));
         }
         return orders;
 
@@ -67,6 +63,14 @@ public class StoreController {
 
     private void getPromotions(List<Order> orders) {
         OutputView.displayGiveawayStart();
+        LocalDate currentDate = LocalDate.now();
 
+        for (Order order : orders) {
+            if (order.isPromotionProduct(currentDate)) {
+                String promotionProductName = order.getOrderedProductName();
+                int promotionProductQuantity = order.getOrderedPromotionQuantity();
+                OutputView.displayGiveaway(promotionProductName, promotionProductQuantity);
+            }
+        }
     }
 }
