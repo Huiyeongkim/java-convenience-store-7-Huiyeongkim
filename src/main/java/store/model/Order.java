@@ -27,16 +27,20 @@ public class Order {
         return orderedProductQuantity;
     }
 
+    public Promotion findPromotion() {
+        Product product = ProductManager.findPromotionProductByName(orderedProductName);
+        if (product == null) {
+            return null;
+        }
+        return PromotionManager.findPromotionByPromotionName(product.getPromotion());
+    }
+
     public boolean isPromotionProduct(LocalDate currentDate) {
         Product product = ProductManager.findPromotionProductByName(orderedProductName);
         if (product == null) {
             return false;
         }
-        Promotion promotion = PromotionManager.findPromotionByPromotionName(product.getPromotion());
-        if (promotion == null) {
-            return false;
-        }
-        return promotion.isPromotionValid(currentDate);
+        return findPromotion().isPromotionValid(currentDate);
     }
 
     public int getOrderedPromotionQuantity() {

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StoreController {
+    private String membership;
+
     public void start() throws IOException {
         InputView.displayWelcomeMessage();
         ProductManager productManager = new ProductManager();
@@ -30,7 +32,7 @@ public class StoreController {
     private void getProducts(PromotionManager promotionManager) {
         String inputProduct = InputView.readProduct();
         List<Order> orders = handleOrder(inputProduct, promotionManager);
-        InputView.readMembership();
+        membership = InputView.readMembership();
         OutputView.displayReceiptStart();
 
         for (Order order : orders) {
@@ -64,13 +66,45 @@ public class StoreController {
     private void getPromotions(List<Order> orders) {
         OutputView.displayGiveawayStart();
         LocalDate currentDate = LocalDate.now();
+        int discountPromotionMoney = 0;
 
         for (Order order : orders) {
-            if (order.isPromotionProduct(currentDate)) {
+            if (order.isPromotionProduct(currentDate) && order.getOrderedPromotionQuantity()!=0) {
                 String promotionProductName = order.getOrderedProductName();
                 int promotionProductQuantity = order.getOrderedPromotionQuantity();
+                discountPromotionMoney += promotionProductQuantity * order.getProductPrice();
                 OutputView.displayGiveaway(promotionProductName, promotionProductQuantity);
             }
         }
+
+        getCountingMoney(orders, discountPromotionMoney);
+    }
+
+    private void getCountingMoney(List<Order> orders, int discountPromotionMoney) {
+        int count = 0;
+        int money = 0;
+        int nonPromotionMoney = 0;
+
+        for (Order order : orders) {
+            count += order.getOrderedProductQuantity();
+            money += order.getOrderedProductQuantity() * order.getProductPrice();
+
+            if (!order.isPromotionProduct(LocalDate.now())) {
+                nonPromotionMoney += order.getOrderedProductQuantity() * order.getProductPrice();
+            }
+        }
+        int discountMembershipMoney = 0;
+        if (getMembership()) {
+            discountMembershipMoney = (int) (nonPromotionMoney * 0.3);
+        }
+        if (discountMembershipMoney > 8000) {
+            discountMembershipMoney = 8000;
+        }
+        int totalMoney = money - discountPromotionMoney - discountMembershipMoney;
+        OutputView.displayMoney(count, money, discountPromotionMoney, discountMembershipMoney,totalMoney);
+    }
+
+    private boolean getMembership() {
+        return membership.equals("Y");
     }
 }

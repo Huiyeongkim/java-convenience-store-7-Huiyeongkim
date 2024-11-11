@@ -29,4 +29,11 @@ public class OutputView {
         System.out.println(promotionProductName + "\t\t" + promotionProductQuantity);
     }
 
+    public static void displayMoney(int count,int money, int discountMoney,int discountMembershipMoney, int totalMoney ) {
+        System.out.println("====================================");
+        System.out.println("총구매액\t\t"+count+"\t"+money);
+        System.out.println("행사할인\t\t\t -"+discountMoney);
+        System.out.println("멤버십할인\t\t\t -"+discountMembershipMoney);
+        System.out.println("내실돈\t\t\t "+totalMoney);
+    }
 }
