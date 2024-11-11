@@ -32,7 +32,11 @@ public class Order {
         if (product == null) {
             return null;
         }
-        return PromotionManager.findPromotionByPromotionName(product.getPromotion());
+        Promotion promotion = PromotionManager.findPromotionByPromotionName(product.getPromotion());
+        if (promotion == null) {
+            return null;
+        }
+        return promotion;
     }
 
     public boolean isPromotionProduct(LocalDate currentDate) {
@@ -53,6 +57,36 @@ public class Order {
             return 0;
         }
 
+        if(orderedProductQuantity > product.getQuantity()) {
+            return (product.getQuantity()/ (promotion.getBuyQuantity() + promotion.getFreeQuantity()))*promotion.getFreeQuantity();
+        }
         return (orderedProductQuantity / (promotion.getBuyQuantity() + promotion.getFreeQuantity()))*promotion.getFreeQuantity();
     }
+
+    public void decreaseProductQuantity(String productName, int quantity) {
+        Product product = ProductManager.findPromotionProductByName(productName);
+        int remainingQuantity = quantity;
+
+        if (product != null) {
+            int currentQuantity = product.getQuantity();
+            if (currentQuantity >= remainingQuantity) {
+                product.setQuantity(currentQuantity - remainingQuantity);
+            }
+            else {
+                product.setQuantity(0);
+            }
+            remainingQuantity -= currentQuantity;
+        }
+
+        if (remainingQuantity > 0) {
+            Product product2 = ProductManager.findWithoutPromotionProductByName(productName);
+            if (product2 != null) {
+                int currentQuantity = product2.getQuantity();
+                if (currentQuantity >= remainingQuantity) {
+                    product2.setQuantity(currentQuantity - remainingQuantity);
+                }
+            }
+        }
+    }
+
 }

@@ -37,6 +37,15 @@ public class ProductManager {
         return null;
     }
 
+    public static Product findWithoutPromotionProductByName(String orderedProductName) {
+        for (Product product : productsWithoutPromotion) {
+            if (product.getProductName().equals(orderedProductName)) {
+                return product;
+            }
+        }
+        return null;
+    }
+
     private void readProductsFile() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
         bufferedReader.readLine();

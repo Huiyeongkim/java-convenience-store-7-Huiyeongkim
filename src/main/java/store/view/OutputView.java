@@ -5,7 +5,13 @@ public class OutputView {
     private final static String giveaway = "=============증\t정===============";
 
     public static void displayStock(String productName, int price, int quantity, String promotion) {
-        System.out.print("- " + productName + " " + price + "원 " + quantity + "개");
+        System.out.print("- " + productName + " " + price + "원 ");
+        if (quantity == 0) {
+            System.out.print("재고 없음");
+        }
+        if (quantity > 0) {
+            System.out.print(quantity +"개 ");
+        }
         if (promotion!=null) {
             System.out.print(" " + promotion);
         }

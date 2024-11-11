@@ -11,12 +11,15 @@ import java.util.List;
 
 public class StoreController {
     private String membership;
+    private ProductManager productManager;
+
+    public StoreController() throws IOException {
+        this.productManager = new ProductManager();
+    }
 
     public void start() throws IOException {
         InputView.displayWelcomeMessage();
-        ProductManager productManager = new ProductManager();
         PromotionManager promotionManager = new PromotionManager();
-
         List<Product> products = productManager.getProducts();
         for (Product product : products) {
             String productName = product.getProductName();
@@ -26,12 +29,12 @@ public class StoreController {
             OutputView.displayStock(productName, price, quantity, promotion);
         }
 
-        getProducts(promotionManager);
+        getProducts();
     }
 
-    private void getProducts(PromotionManager promotionManager) {
+    private void getProducts() throws IOException {
         String inputProduct = InputView.readProduct();
-        List<Order> orders = handleOrder(inputProduct, promotionManager);
+        List<Order> orders = handleOrder(inputProduct);
         membership = InputView.readMembership();
         OutputView.displayReceiptStart();
 
@@ -39,15 +42,21 @@ public class StoreController {
             String orderedProductName = order.getOrderedProductName();
             int orderedProductQuantity = order.getOrderedProductQuantity();
             int orderedProductPrice = order.getProductPrice();
-
             int orderedPrice = orderedProductPrice * orderedProductQuantity;
             OutputView.displayReceipt(orderedProductName, orderedProductQuantity, orderedPrice);
         }
 
-        getPromotions(orders);
+        int discountPromotionMoney = getPromotions(orders);
+        for (Order order : orders) {
+            String orderedProductName = order.getOrderedProductName();
+            int orderedProductQuantity = order.getOrderedProductQuantity();
+            order.decreaseProductQuantity(orderedProductName, orderedProductQuantity);
+        }
+
+        getCountingMoney(orders, discountPromotionMoney);
     }
 
-    private List<Order> handleOrder(String inputProduct, PromotionManager promotionManager) {
+    private List<Order> handleOrder(String inputProduct) throws IOException {
         String[] tokens = inputProduct.split(",");
         List<Order> orders = new ArrayList<>();
         for (String token : tokens) {
@@ -63,7 +72,7 @@ public class StoreController {
 
     }
 
-    private void getPromotions(List<Order> orders) {
+    private int getPromotions(List<Order> orders) throws IOException {
         OutputView.displayGiveawayStart();
         LocalDate currentDate = LocalDate.now();
         int discountPromotionMoney = 0;
@@ -76,11 +85,10 @@ public class StoreController {
                 OutputView.displayGiveaway(promotionProductName, promotionProductQuantity);
             }
         }
-
-        getCountingMoney(orders, discountPromotionMoney);
+        return discountPromotionMoney;
     }
 
-    private void getCountingMoney(List<Order> orders, int discountPromotionMoney) {
+    private void getCountingMoney(List<Order> orders, int discountPromotionMoney) throws IOException {
         int count = 0;
         int money = 0;
         int nonPromotionMoney = 0;
@@ -102,9 +110,29 @@ public class StoreController {
         }
         int totalMoney = money - discountPromotionMoney - discountMembershipMoney;
         OutputView.displayMoney(count, money, discountPromotionMoney, discountMembershipMoney,totalMoney);
+
+        getAgain();
     }
 
     private boolean getMembership() {
         return membership.equals("Y");
+    }
+
+    private void getAgain() throws IOException {
+        String again = InputView.readOtherProduct();
+
+        if (again.equals("Y")) {
+            InputView.displayWelcomeMessage();
+            List<Product> products = productManager.getProducts();
+            for (Product product : products) {
+                String productName = product.getProductName();
+                int price = product.getPrice();
+                int quantity = product.getQuantity();
+                String promotion = product.getPromotion();
+                OutputView.displayStock(productName, price, quantity, promotion);
+            }
+
+            getProducts();
+        }
     }
 }

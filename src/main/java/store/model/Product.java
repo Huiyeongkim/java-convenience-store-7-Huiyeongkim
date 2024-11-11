@@ -3,7 +3,7 @@ package store.model;
 public class Product {
     private final String productName;
     private final int price;
-    private final int quantity;
+    private int quantity;
     private final String promotion;
 
     public Product(String productName, int price, int quantity, String promotion) {
@@ -28,4 +28,9 @@ public class Product {
     public String getPromotion() {
         return promotion;
     }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
 }
